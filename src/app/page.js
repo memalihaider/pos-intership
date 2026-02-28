@@ -1,7 +1,12 @@
-import Image from "next/image";
+import AuthComponent from "@/components/auth";
+import TestData from "@/components/testdata";
 
 export default function Home() {
   return (
-   <h1>my testing</h1>
+    <>
+      <TestData/>
+      {/* <AuthComponent/> */}
+    </>
   );
 }
+  
