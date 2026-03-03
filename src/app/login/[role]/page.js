@@ -1,7 +1,5 @@
 "use client";
 import { use } from "react";
-
-import {CustomerSignup} from "../../../components/customerSignup";
 import {AdminLogin} from "../../../components/adminLogin";
 import {StaffLogin} from "../../../components/staffLogin"; 
 import { notFound } from "next/navigation";      
@@ -11,16 +9,18 @@ export default function LoginPage({ params }) {
 
   if (!role) return notFound();
 
-  console.log("Role:", role); // Debugging log     
+  // console.log("Role:", role); // Debugging log     
 
-  switch (role) {
-    case "customer":
+    if(role=="customer") {
       return <CustomerLogin />;
-    case "admin":
+    }
+    else if(role=="admin") {
       return <AdminLogin />;
-    case "staff":
+    }   
+    else if(role=="staff") {
       return <StaffLogin />;
-    default:
-      return notFound();    
-  }
+    }
+    else{
+      return notFound();
+    }
 }
