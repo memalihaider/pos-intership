@@ -3,9 +3,11 @@ import Link from "next/link";
 import {useState} from "react";
 import {Auth} from "../config/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
 export function CustomerLogin() {
 
     let [data,setData] = useState({email:"",password:""});
+    const router = useRouter();
 
     function handleOnchnage(event){
 
@@ -17,10 +19,13 @@ export function CustomerLogin() {
         event.preventDefault();
         console.log("Form submitted with data:", data); // Debugging log
         try{
+        
         await signInWithEmailAndPassword(Auth,data.email,data.password);
-        event.target.reset();
+        setData({...data,email:"",password:""})
         console.log("User logged in successfully"); 
         console.log("Current user:", Auth.currentUser); // Debugging log to check the current user
+        router.push("/userDashBoard")
+        
         }catch(error){
             console.error("Error logging in:", error);
         }

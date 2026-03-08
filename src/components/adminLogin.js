@@ -3,9 +3,11 @@ import {useState} from "react"
 import {Auth} from "../config/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 export function AdminLogin() {
 
-    let [data,setData] = useState({email:"",password:""});  
+    let [data,setData] = useState({email:"",password:""});
+    const router = useRouter();  
 
     function handleOnchnage(event){
 
@@ -15,9 +17,10 @@ export function AdminLogin() {
 
     async function handleOnsubmit(event){
         event.preventDefault();
-        console.log("Form submitted with data:", data); // Debugging log
+        // console.log("Form submitted with data:", data); // Debugging log
         try{
-        await signInWithEmailAndPassword(Auth,data.email,data.password);        
+        await signInWithEmailAndPassword(Auth,data.email,data.password);  
+        router.push("/adminDashBoard")      
         }catch(error){
             console.error("Error logging in:", error);
         }       

@@ -2,11 +2,13 @@
 import {useState} from "react";
 import {Auth} from "../config/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export function StaffLogin() {
 
   let [data,setData] = useState({email:"",password:""});
+  const router = useRouter();
 
   function handleOnchnage(event){
 
@@ -15,9 +17,12 @@ export function StaffLogin() {
 
   async function handleOnsubmit(event){
     event.preventDefault();
-    console.log("Form submitted with data:", data); // Debugging log
+    // console.log("Form submitted with data:", data); // Debugging log
     try{
-    await signInWithEmailAndPassword(Auth,data.email,data.password);        
+    await signInWithEmailAndPassword(Auth,data.email,data.password); 
+
+    router.push("/staffDashBoard")
+
 
     }catch(error){
         console.error("Error logging in:", error);
