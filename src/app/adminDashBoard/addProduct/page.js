@@ -4,7 +4,7 @@ import {collection,addDoc} from "firebase/firestore"
 import { useState,useEffect } from "react";
 
 export default function AddProduct(){
-    let [data,setData] = useState({name:"",category:"",price:0,costPrice:0,stock:0});
+    let [data,setData] = useState({name:"",category:"",price:0,costPrice:0,stock:0,colour:"",size:""});
 
     async function handleOneSubmit(event){
 
@@ -18,6 +18,8 @@ export default function AddProduct(){
                 price:data.price,
                 costPrice:data.costPrice,
                 stock:data.stock,
+                colour:data.colour,
+                size:data.size
             }
         )
         event.target.reset();
@@ -32,11 +34,27 @@ export default function AddProduct(){
         <>
         <h1>Add Product</h1>
         <form onSubmit={handleOneSubmit} method="post">
-            <input type="text" placeholder="Name" onChange={(e)=>setData({...data,name:e.target.value})}/>
-            <input type="text" placeholder="Category" onChange={(e)=>setData({...data,category:e.target.value})}/>
-            <input type="number" placeholder="Price" onChange={(e)=>setData({...data,price:Number(e.target.value)})}/>
-            <input type="number" placeholder="Cost Price" onChange={(e)=>setData({...data,costPrice:Number(e.target.value)})}/>
-            <input type="number" placeholder="Stock" onChange={(e)=>setData({...data,stock:Number(e.target.value)})}/>
+            <label name="name">name</label>
+            <input type="text" placeholder="Name" name="name"onChange={(e)=>setData({...data,name:e.target.value})}/>
+            <br/><br/>
+            <label name="category">category</label>
+            <input type="text" placeholder="Category" name="category" onChange={(e)=>setData({...data,category:e.target.value})}/>
+            <br/><br/>
+            <label name="colour">colour</label>
+            <input type="text" placeholder="colour" name="colour" onChange={(e)=>setData({...data,colour:e.target.value})}/>
+            <br/><br/>
+            <label name="size">size</label>
+            <input type="text" placeholder="size" name="size"onChange={(e)=>setData({...data,size:e.target.value})}/>
+            <br/><br/>
+            <label name="price">price</label>
+            <input type="number" placeholder="Price" name="price" onChange={(e)=>setData({...data,price:Number(e.target.value)})}/>
+            <br/><br/>
+            <label name="cost-price">cost price</label>
+            <input type="number" placeholder="Cost Price" name="cost-price"onChange={(e)=>setData({...data,costPrice:Number(e.target.value)})}/>
+            <br/><br/>
+            <label name="stock">stock</label>
+            <input type="number" placeholder="Stock" name="stock"onChange={(e)=>setData({...data,stock:Number(e.target.value)})}/>
+            <br/><br/>
   
             <button type="submit">Add Product</button>
         </form>

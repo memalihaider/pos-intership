@@ -4,6 +4,7 @@ import {useState} from "react";
 import {Auth} from "../config/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useRouter } from "next/navigation";
+
 export function CustomerLogin() {
 
     let [data,setData] = useState({email:"",password:""});
