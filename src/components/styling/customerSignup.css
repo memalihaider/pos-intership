@@ -1,0 +1,550 @@
+/* customerSignup.css */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.signup-wrapper {
+  min-height: 100vh;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #0B1120 0%, #1A2639 100%);
+  padding: 16px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.signup-card {
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(10px);
+  border-radius: 24px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  padding: 32px 40px;
+  width: 100%;
+  max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.signup-card:hover {
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.6);
+}
+
+/* Hide scrollbar but keep functionality */
+.signup-card::-webkit-scrollbar {
+  width: 4px;
+}
+
+.signup-card::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.signup-card::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 20px;
+}
+
+.signup-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #0B1120;
+  margin-bottom: 6px;
+  text-align: center;
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.signup-subtitle {
+  color: #4B5565;
+  text-align: center;
+  margin-bottom: 28px;
+  font-size: 14px;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.signup-form input {
+  padding: 14px 18px;
+  border: 1.5px solid #E5E9F0;
+  border-radius: 16px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+  outline: none;
+  background: #F8FAFE;
+  color: #0B1120;
+  font-weight: 500;
+}
+
+.signup-form input:focus {
+  border-color: #3B82F6;
+  background: white;
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.15);
+}
+
+.signup-form input::placeholder {
+  color: #9AA6B8;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.signup-form button {
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  color: white;
+  padding: 14px 20px;
+  border: none;
+  border-radius: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+  letter-spacing: 0.3px;
+  box-shadow: 0 10px 20px -8px rgba(37, 99, 235, 0.3);
+  text-transform: uppercase;
+}
+
+.signup-form button:hover {
+  background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px -8px rgba(37, 99, 235, 0.4);
+}
+
+.signup-form button:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 15px -8px rgba(37, 99, 235, 0.4);
+}
+
+/* Loading state for button */
+.signup-form button.loading {
+  opacity: 0.8;
+  cursor: not-allowed;
+  position: relative;
+  pointer-events: none;
+  padding-right: 40px;
+}
+
+.signup-form button.loading::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 0.8s linear infinite;
+  right: 20px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+@keyframes spin {
+  to { transform: translateY(-50%) rotate(360deg); }
+}
+
+.login-options {
+  text-align: center;
+  border-top: 1.5px solid #EFF2F6;
+  padding-top: 20px;
+  margin-top: 4px;
+}
+
+.login-options p {
+  color: #64748B;
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.login-links {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.login-links a {
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 40px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  letter-spacing: 0.3px;
+}
+
+/* Consistent link button styling - matching login page style */
+.login-links a:first-child {
+  background: #3B82F6;
+  color: white;
+  box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+}
+
+.login-links a:nth-child(2) {
+  background: #F1F5F9;
+  color: #1E293B;
+  border: 1px solid #E2E8F0;
+}
+
+.login-links a:last-child {
+  background: #F1F5F9;
+  color: #1E293B;
+  border: 1px solid #E2E8F0;
+}
+
+.login-links a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-links a:first-child:hover {
+  background: #2563EB;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+}
+
+.login-links a:nth-child(2):hover,
+.login-links a:last-child:hover {
+  background: #FFFFFF;
+  border-color: #3B82F6;
+  color: #3B82F6;
+}
+
+/* Error state */
+.signup-form input.error {
+  border-color: #EF4444;
+  background: #FEF2F2;
+}
+
+.error-message {
+  color: #EF4444;
+  font-size: 13px;
+  margin-bottom: 16px;
+  font-weight: 500;
+  background: #FEF2F2;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #FEE2E2;
+  text-align: center;
+}
+
+/* Success message */
+.success-message {
+  background: #10B981;
+  color: white;
+  padding: 10px 14px;
+  border-radius: 12px;
+  margin-bottom: 18px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Password strength indicator */
+.password-strength {
+  margin-top: 4px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.strength-bar {
+  height: 4px;
+  flex: 1;
+  background: #E2E8F0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.strength-bar-fill.weak {
+  width: 33.33%;
+  background: #EF4444;
+}
+
+.strength-bar-fill.medium {
+  width: 66.66%;
+  background: #F59E0B;
+}
+
+.strength-bar-fill.strong {
+  width: 100%;
+  background: #10B981;
+}
+
+/* Responsive Design */
+@media (max-width: 480px) {
+  .signup-wrapper {
+    padding: 12px;
+  }
+  
+  .signup-card {
+    padding: 24px 20px;
+    max-height: 95vh;
+  }
+  
+  .signup-title {
+    font-size: 24px;
+  }
+  
+  .signup-subtitle {
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+  
+  .signup-form {
+    gap: 14px;
+  }
+  
+  .signup-form input {
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 13px;
+  }
+  
+  .signup-form button {
+    padding: 12px 16px;
+    font-size: 14px;
+    border-radius: 14px;
+    height: 42px;
+  }
+  
+  .login-links {
+    gap: 8px;
+  }
+  
+  .login-links a {
+    padding: 6px 14px;
+    font-size: 12px;
+  }
+}
+
+/* Landscape mode optimization */
+@media (max-height: 700px) and (orientation: landscape) {
+  .signup-wrapper {
+    align-items: center;
+    overflow: hidden;
+  }
+  
+  .signup-card {
+    max-height: 95vh;
+    padding: 24px 32px;
+  }
+  
+  .signup-subtitle {
+    margin-bottom: 16px;
+  }
+  
+  .signup-form {
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .signup-form input,
+  .signup-form button {
+    padding: 10px 16px;
+    height: 42px;
+  }
+  
+  .login-options {
+    padding-top: 12px;
+  }
+}
+/* customerSignup.css - Add these new styles to your existing file */
+
+/* Divider (matching login pages) */
+.divider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 20px 0;
+  color: #94A3B8;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1.5px solid #EFF2F6;
+}
+
+.divider span {
+  padding: 0 12px;
+}
+
+/* Navigation links (matching login pages) */
+.nav-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.nav-link-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: #F8FAFE;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 1.5px solid transparent;
+}
+
+.nav-link-content {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.nav-link-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0B1120;
+}
+
+.nav-link-description {
+  font-size: 12px;
+  color: #64748B;
+}
+
+.nav-link-arrow {
+  color: #94A3B8;
+  font-size: 18px;
+  transition: transform 0.2s ease;
+}
+
+.nav-link-item:hover {
+  background: white;
+  border-color: #3B82F6;
+  transform: translateX(5px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.nav-link-item:hover .nav-link-arrow {
+  color: #3B82F6;
+  transform: translateX(5px);
+}
+
+/* Signup prompt (replacing old login-options) */
+.signup-prompt {
+  text-align: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1.5px solid #EFF2F6;
+}
+
+.signup-prompt p {
+  color: #64748B;
+  font-size: 13px;
+  margin-bottom: 12px;
+}
+
+.signup-link {
+  display: inline-block;
+  background: linear-gradient(135deg, #3B82F6 0%, #2563EB 100%);
+  color: white;
+  text-decoration: none;
+  padding: 12px 24px;
+  border-radius: 40px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 8px 15px -8px rgba(37, 99, 235, 0.4);
+}
+
+.signup-link:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 20px -8px rgba(37, 99, 235, 0.5);
+}
+
+/* Enhanced error message */
+.error-message {
+  color: #EF4444;
+  font-size: 13px;
+  margin-bottom: 16px;
+  font-weight: 500;
+  background: #FEF2F2;
+  padding: 10px 14px;
+  border-radius: 12px;
+  border: 1px solid #FEE2E2;
+  text-align: center;
+}
+
+/* Password strength indicator improvements */
+.password-strength {
+  margin-top: -8px;
+  margin-bottom: 4px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748B;
+}
+
+.strength-bar {
+  height: 4px;
+  flex: 1;
+  background: #E2E8F0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.strength-bar-fill {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.strength-bar-fill.weak {
+  background: #EF4444;
+}
+
+.strength-bar-fill.medium {
+  background: #F59E0B;
+}
+
+.strength-bar-fill.strong {
+  background: #10B981;
+}
+
+/* Keep your existing styles and just add these new ones */
