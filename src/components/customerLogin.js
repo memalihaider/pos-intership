@@ -22,7 +22,7 @@ export function CustomerLogin() {
         setLoading(true);
         setError("");
         
-        console.log("Form submitted with data:", data);
+        // console.log("Form submitted with data:", data);
         
         try {
             await signInWithEmailAndPassword(Auth, data.email, data.password);

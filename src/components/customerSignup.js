@@ -1,8 +1,9 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { Auth } from "../config/firebase";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { Auth,db } from "../config/firebase";
+import { createUserWithEmailAndPassword,sendEmailVerification} from "firebase/auth";
+import { setDoc,collection,doc } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import "./styling/customerSignup.css";
 
@@ -22,7 +23,7 @@ export function CustomerSignup() {
     setLoading(true);
     setError("");
 
-    console.log("Form submitted with data:", data);
+    // console.log("Form submitted with data:", data);
 
     try {
       if (data.password !== data.confirmPassword) {
@@ -37,14 +38,22 @@ export function CustomerSignup() {
         return;
       }
 
-      let userCredential = await createUserWithEmailAndPassword(Auth, data.email, data.password);
-      console.log("User created:", userCredential.user);
+      let userCredential = await createUserWithEmailAndPassword(Auth, data.email, data.password)
+      const user  = userCredential.user;
+      console.log(user)
+      await sendEmailVerification(user)
+      
+      await setDoc(doc(db,"users",userCredential.user.uid),{
+      email:data.email,
+      role:"customer"
+      })
+      // console.log("User created:", userCredential.user);
       
       // Reset form
       setData({ email: "", password: "", confirmPassword: "" });
       
       // Show success message and redirect
-      router.push("/login/customer?registered=true");
+      router.push("/userDashBoard");
       
     } catch (error) {
       console.error("Error creating user:", error);
