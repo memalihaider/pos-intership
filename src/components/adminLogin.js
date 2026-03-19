@@ -7,28 +7,44 @@ import { useRouter } from "next/navigation";
 import "./styling/adminLogin.css";
 
 export function AdminLogin() {
-    let [data, setData] = useState({ email: "", password: "" });
-    let [loading, setLoading] = useState(false);
-    let [error, setError] = useState("");
+    const [data, setData] = useState({ email: "", password: "" });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
     const router = useRouter();
 
-    function handleOnchange(event) {
-        setData({ ...data, [event.target.name]: event.target.value });
+    function handleOnchange(e) {
+        setData({ ...data, [e.target.name]: e.target.value });
         setError("");
     }
 
-    async function handleOnsubmit(event) {
-        event.preventDefault();
+    async function handleOnsubmit(e) {
+        e.preventDefault();
         setLoading(true);
         setError("");
-        
+
         try {
+            // Just sign in with Firebase Auth — no Firestore check here
+            // AuthGuard on every dashboard page handles the role check
             await signInWithEmailAndPassword(Auth, data.email, data.password);
             setData({ email: "", password: "" });
             router.push("/adminDashBoard");
-        } catch (error) {
-            console.error("Error logging in:", error);
-            setError("Invalid admin credentials. Please try again.");
+
+        } catch (err) {
+            switch (err.code) {
+                case "auth/user-not-found":
+                case "auth/wrong-password":
+                case "auth/invalid-credential":
+                    setError("Invalid email or password.");
+                    break;
+                case "auth/invalid-email":
+                    setError("Invalid email address.");
+                    break;
+                case "auth/too-many-requests":
+                    setError("Too many attempts. Please try again later.");
+                    break;
+                default:
+                    setError("Login failed. Please try again.");
+            }
         } finally {
             setLoading(false);
         }
@@ -51,7 +67,6 @@ export function AdminLogin() {
                         onChange={handleOnchange}
                         required
                     />
-                    
                     <input
                         type="password"
                         placeholder="Password"
@@ -60,19 +75,12 @@ export function AdminLogin() {
                         onChange={handleOnchange}
                         required
                     />
-
-                    {/* <div className="forgot-password">
-                        <Link href="/forgot-password">Forgot password?</Link>
-                    </div> */}
-
-                    <button type="submit" className={loading ? "loading" : ""}>
+                    <button type="submit" disabled={loading}>
                         {loading ? "Authenticating..." : "Login as Admin"}
                     </button>
                 </form>
 
-                <div className="divider">
-                    <span>Navigation</span>
-                </div>
+                <div className="divider"><span>Navigation</span></div>
 
                 <div className="nav-links">
                     <Link href="/login/customer" className="nav-link-item">
@@ -80,32 +88,20 @@ export function AdminLogin() {
                             <span className="nav-link-label">Customer Login</span>
                             <span className="nav-link-description">Sign in as customer</span>
                         </div>
-                        {/* <span className="nav-link-arrow">→</span> */}
                     </Link>
-
                     <Link href="/login/staff" className="nav-link-item">
                         <div className="nav-link-content">
                             <span className="nav-link-label">Staff Login</span>
                             <span className="nav-link-description">Access staff portal</span>
                         </div>
-                        {/* <span className="nav-link-arrow">→</span> */}
                     </Link>
-
                     <Link href="/signup/customer" className="nav-link-item">
                         <div className="nav-link-content">
                             <span className="nav-link-label">Customer Signup</span>
                             <span className="nav-link-description">Create new account</span>
                         </div>
-                        {/* <span className="nav-link-arrow">→</span> */}
                     </Link>
                 </div>
-
-                {/* <div className="signup-prompt">
-                    <p>Need an admin account?</p>
-                    <Link href="/signup/admin" className="signup-link">
-                        Contact Super Admin
-                    </Link>
-                </div> */}
             </div>
         </div>
     );
