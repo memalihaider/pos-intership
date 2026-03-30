@@ -1,10 +1,12 @@
-"use client"
-import { db } from "../../../config/firebase"
-import { collection, addDoc } from "firebase/firestore"
-import { useState, useEffect } from "react";
-import "./addProduct.css";
+"use client";
+
+import { useEffect, useState } from "react";
+import { use } from "react";
+import { db } from "../../../../config/firebase";
+import { getDoc, updateDoc, doc } from "firebase/firestore";
 import { useRouter, usePathname } from "next/navigation";
 import Link from "next/link";
+import "./editProduct.css";
 
 const navItems = [
     { label: "Dashboard",         href: "/adminDashBoard" },
@@ -18,25 +20,46 @@ const navItems = [
     // { label: "Reports",           href: "/adminDashBoard/reports" },
 ];
 
-export default function AddProduct() {
+export default function Dynamic({ params }) {
+    const { id } = use(params);
     const router = useRouter();
     const pathname = usePathname();
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    const [data, setData] = useState({
-        name: "", category: "", price: 0, discount: 0,
-        stock: 0, colour: "", size: "", imageUrl: "", barcode: "",
-    });
     const [loading, setLoading] = useState(false);
+    const [fetchLoading, setFetchLoading] = useState(true);
     const [success, setSuccess] = useState(false);
     const [error, setError] = useState("");
 
+    const [data, setData] = useState({
+        name: "", category: "", price: 0, discount: 0,
+        stock: 0, colour: "", size: "", imageUrl: "", barcode: "", createdAt: ""
+    });
+    const [originalData, setOriginalData] = useState({});
+
+    async function getProduct() {
+        setFetchLoading(true);
+        try {
+            const ref = doc(db, "product", id);
+            const snap = await getDoc(ref);
+            if (!snap.exists()) { setError("Product not found"); return; }
+            const productData = snap.data();
+            setOriginalData(productData);
+            setData(prev => ({ ...prev, ...productData }));
+        } catch (e) {
+            console.error("Error fetching product:", e);
+            setError("Failed to load product");
+        } finally {
+            setFetchLoading(false);
+        }
+    }
+
+    useEffect(() => { getProduct(); }, [id]);
     useEffect(() => { setSidebarOpen(false); }, [pathname]);
 
-    const handleInputChange = (e) => {
-        const { name, value, type } = e.target;
-        setData({ ...data, [name]: type === "number" ? Number(value) : value });
-    };
+    function handleInputChange(e) {
+        setData({ ...data, [e.target.name]: e.target.value });
+    }
 
     async function handleSubmit(e) {
         e.preventDefault();
@@ -44,27 +67,35 @@ export default function AddProduct() {
         setError("");
         setSuccess(false);
         try {
-            await addDoc(collection(db, "product"), {
-                name: data.name,
-                category: data.category,
-                price: Number(data.price),
-                discount: Number(data.discount),
-                stock: Number(data.stock),
-                colour: data.colour,
-                size: data.size,
-                barcode: data.barcode,
-                imageUrl: data.imageUrl,
-                createdAt: Date.now(),
+            await updateDoc(doc(db, "product", id), {
+                name: data.name, category: data.category,
+                price: Number(data.price), discount: Number(data.discount),
+                stock: Number(data.stock), colour: data.colour,
+                size: data.size, barcode: data.barcode,
+                imageUrl: data.imageUrl, updatedAt: Date.now()
             });
-            setData({ name: "", category: "", price: 0, discount: 0, stock: 0, colour: "", size: "", imageUrl: "", barcode: "" });
             setSuccess(true);
-            setTimeout(() => setSuccess(false), 3000);
-        } catch (err) {
-            console.error(err);
-            setError("Failed to add product. Please try again.");
+            setTimeout(() => router.push("/adminDashBoard/viewProducts"), 1500);
+        } catch (e) {
+            console.error("Error updating product:", e);
+            setError("Failed to update product. Please try again.");
         } finally {
             setLoading(false);
         }
+    }
+
+    const hasChanges = () => JSON.stringify(data) !== JSON.stringify(originalData);
+
+    /* ── Loading screen ── */
+    if (fetchLoading) {
+        return (
+            <div className="pos-shell">
+                <div className="loading-container">
+                    <div className="loading-spinner" />
+                    <p>Loading product details…</p>
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -85,7 +116,7 @@ export default function AddProduct() {
                         <Link
                             key={item.label}
                             href={item.href}
-                            className={`nav-item ${item.href === "/adminDashBoard/viewProducts" ? "active" : ""}`}
+                            className={`nav-item ${pathname === item.href || pathname.startsWith("/adminDashBoard/viewProducts") ? (item.href === "/adminDashBoard/viewProducts" ? "active" : "") : ""}`}
                         >
                             {item.label}
                         </Link>
@@ -121,40 +152,40 @@ export default function AddProduct() {
                 <main className="page-body">
 
                     {/* Heading row */}
-                    <div className="ap-heading-row">
+                    <div className="ep-heading-row">
                         <div>
-                            <h1 className="ap-title">Add New Product</h1>
-                            <p className="ap-subtitle">Fill in the details to add a product to your inventory</p>
+                            <h1 className="ep-title">Edit Product</h1>
+                            <p className="ep-subtitle">Update product information and inventory details</p>
                         </div>
-                        <Link href="/adminDashBoard/viewProducts" className="ap-back-btn">
-                            Back to Products
-                        </Link>
+                        <div className="ep-id-badge">
+                            ID: {id.slice(0, 8)}…
+                        </div>
                     </div>
 
                     {/* Alerts */}
                     {success && (
-                        <div className="ap-alert ap-alert-success">
-                            ✅ Product added successfully!
+                        <div className="ep-alert ep-alert-success">
+                            ✅ Product updated successfully! Redirecting…
                         </div>
                     )}
                     {error && (
-                        <div className="ap-alert ap-alert-error">
+                        <div className="ep-alert ep-alert-error">
                             ⚠️ {error}
                         </div>
                     )}
 
                     {/* Form card */}
-                    <div className="ap-card">
+                    <div className="ep-card">
                         <form onSubmit={handleSubmit}>
 
-                            {/* Basic Information */}
-                            <div className="ap-section">
-                                <h3 className="ap-section-title">Basic Information</h3>
-                                <div className="ap-row">
-                                    <div className="ap-group">
-                                        <label className="ap-label">Product Name *</label>
+                            {/* Section: Basic Info */}
+                            <div className="ep-section">
+                                <h3 className="ep-section-title">Basic Information</h3>
+                                <div className="ep-row">
+                                    <div className="ep-group">
+                                        <label className="ep-label">Product Name *</label>
                                         <input
-                                            className="ap-input"
+                                            className="ep-input"
                                             type="text"
                                             name="name"
                                             placeholder="e.g., Cotton T-Shirt"
@@ -163,22 +194,21 @@ export default function AddProduct() {
                                             required
                                         />
                                     </div>
-                                    <div className="ap-group">
-                                        <label className="ap-label">Category *</label>
+                                    <div className="ep-group">
+                                        <label className="ep-label">Category</label>
                                         <input
-                                            className="ap-input"
+                                            className="ep-input"
                                             type="text"
                                             name="category"
                                             placeholder="e.g., Apparel"
                                             value={data.category}
                                             onChange={handleInputChange}
-                                            required
                                         />
                                     </div>
-                                    <div className="ap-group">
-                                        <label className="ap-label">Barcode</label>
+                                    <div className="ep-group">
+                                        <label className="ep-label">Barcode</label>
                                         <input
-                                            className="ap-input"
+                                            className="ep-input"
                                             type="text"
                                             name="barcode"
                                             placeholder="e.g., 123456789"
@@ -189,14 +219,14 @@ export default function AddProduct() {
                                 </div>
                             </div>
 
-                            {/* Pricing & Inventory */}
-                            <div className="ap-section">
-                                <h3 className="ap-section-title">Pricing &amp; Inventory</h3>
-                                <div className="ap-row">
-                                    <div className="ap-group">
-                                        <label className="ap-label">Price </label>
+                            {/* Section: Pricing & Inventory */}
+                            <div className="ep-section">
+                                <h3 className="ep-section-title">Pricing &amp; Inventory</h3>
+                                <div className="ep-row">
+                                    <div className="ep-group">
+                                        <label className="ep-label">Price ($)</label>
                                         <input
-                                            className="ap-input"
+                                            className="ep-input"
                                             type="number"
                                             name="price"
                                             placeholder="0.00"
@@ -206,10 +236,10 @@ export default function AddProduct() {
                                             required
                                         />
                                     </div>
-                                    <div className="ap-group">
-                                        <label className="ap-label">Discount (%)</label>
+                                    <div className="ep-group">
+                                        <label className="ep-label">Discount (%)</label>
                                         <input
-                                            className="ap-input"
+                                            className="ep-input"
                                             type="number"
                                             name="discount"
                                             placeholder="0"
@@ -218,10 +248,10 @@ export default function AddProduct() {
                                             onChange={handleInputChange}
                                         />
                                     </div>
-                                    <div className="ap-group">
-                                        <label className="ap-label">Stock</label>
+                                    <div className="ep-group">
+                                        <label className="ep-label">Stock</label>
                                         <input
-                                            className="ap-input"
+                                            className="ep-input"
                                             type="number"
                                             name="stock"
                                             placeholder="0"
@@ -234,14 +264,14 @@ export default function AddProduct() {
                                 </div>
                             </div>
 
-                            {/* Product Details */}
-                            <div className="ap-section">
-                                <h3 className="ap-section-title">Product Details</h3>
-                                <div className="ap-row">
-                                    <div className="ap-group">
-                                        <label className="ap-label">Colour</label>
+                            {/* Section: Product Details */}
+                            <div className="ep-section">
+                                <h3 className="ep-section-title">Product Details</h3>
+                                <div className="ep-row">
+                                    <div className="ep-group">
+                                        <label className="ep-label">Colour</label>
                                         <input
-                                            className="ap-input"
+                                            className="ep-input"
                                             type="text"
                                             name="colour"
                                             placeholder="e.g., Red, Blue"
@@ -249,10 +279,10 @@ export default function AddProduct() {
                                             onChange={handleInputChange}
                                         />
                                     </div>
-                                    <div className="ap-group">
-                                        <label className="ap-label">Size</label>
+                                    <div className="ep-group">
+                                        <label className="ep-label">Size</label>
                                         <select
-                                            className="ap-input"
+                                            className="ep-input"
                                             name="size"
                                             value={data.size}
                                             onChange={handleInputChange}
@@ -268,39 +298,52 @@ export default function AddProduct() {
                                 </div>
                             </div>
 
-                            {/* Media */}
-                            {/* <div className="ap-section">
-                                <h3 className="ap-section-title">Product Media</h3>
-                                <div className="ap-group" style={{ maxWidth: 420 }}>
-                                    <label className="ap-label">Product Image</label>
+                            {/* Section: Media */}
+                            {/* <div className="ep-section">
+                                <h3 className="ep-section-title">Product Media</h3>
+                                <div className="ep-group" style={{ maxWidth: 400 }}>
+                                    <label className="ep-label">Product Image URL</label>
                                     <input
-                                        className="ap-input ap-file-input"
-                                        type="file"
+                                        className="ep-input"
+                                        type="text"
                                         name="imageUrl"
-                                        accept="image/*"
-                                        onChange={(e) => setData({ ...data, imageUrl: e.target.files[0]?.name || "" })}
+                                        placeholder="https://..."
+                                        value={data.imageUrl}
+                                        onChange={handleInputChange}
                                     />
-                                    <span className="ap-helper">Supported formats: JPG, PNG, GIF</span>
+                                    <span className="ep-helper">Paste an image URL or upload path</span>
                                 </div>
+
+                                {data.imageUrl && data.imageUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i) && (
+                                    <div className="ep-image-preview">
+                                        <img src={data.imageUrl} alt="Preview" />
+                                        <span>Current image</span>
+                                    </div>
+                                )}
                             </div> */}
 
                             {/* Actions */}
-                            <div className="ap-actions">
+                            <div className="ep-actions">
                                 <button
                                     type="submit"
-                                    className="ap-save-btn"
-                                    disabled={loading}
+                                    className="ep-save-btn"
+                                    disabled={loading || !hasChanges()}
                                 >
-                                    {loading ? "Adding Product…" : "Add Product"}
+                                    {loading ? "Updating…" : "Update Product"}
                                 </button>
-                                <Link href="/adminDashBoard/viewProducts" className="ap-cancel-btn">
+                                <Link href="/adminDashBoard/viewProducts" className="ep-cancel-btn">
                                     Cancel
                                 </Link>
                             </div>
 
+                            {data.createdAt && (
+                                <p className="ep-timestamp">
+                                    Created: {new Date(data.createdAt).toLocaleString()}
+                                </p>
+                            )}
+
                         </form>
                     </div>
-
                 </main>
             </div>
         </div>
